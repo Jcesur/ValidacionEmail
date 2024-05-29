@@ -1,0 +1,13 @@
+[Header]
+Mask=*.src;*.vw;*.sl;*.dg;*.rv;*.bp;*.pkg;*.wo;*.dd;*.inc;*.tpl;*.dfo;*.asp;*.asa;*.html;*.css;*.js
+Active=0
+SubDirectories=1
+WholeWordOnly=0
+SearchWhere=0
+Location=C:\DataFlex Projects\ValidacionEmail\IdeSrc\pecci_FindInFiles.dsk
+[C:\DataFlex Projects\ValidacionEmail\AppSrc]
+IsEnabled=1
+[C:\DataFlex Projects\ValidacionEmail\DDSrc]
+IsEnabled=1
+[C:\DataFlex Projects\ValidacionEmail\AppHtml]
+IsEnabled=1

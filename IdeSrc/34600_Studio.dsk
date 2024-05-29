@@ -1,0 +1,39 @@
+[Workspace]
+CurrentProject=ValidacionEmail.src
+Location=C:\DataFlex Projects\ValidacionEmail\IdeSrc\34600_Studio.dsk
+CreateNew=-1
+[TabWindows]
+GroupCount=1
+HorizontalGroups=1
+[TabGroup0]
+GroupSize=40
+SelectedTab=2
+[Window0]
+Filename=Workspace Dashboard
+ViewType=101
+Top=21
+Left=0
+Bottom=453
+Right=913
+TabIndex=0
+TabGroup=0
+[Window1]
+Filename=C:\DataFlex Projects\ValidacionEmail\AppSrc\ValidacionEmail.src
+ViewType=2
+Top=21
+Left=0
+Bottom=453
+Right=913
+TabIndex=1
+TabGroup=0
+[Window2]
+Filename=C:\DataFlex Projects\ValidacionEmail\AppSrc\Validacion.pkg
+ViewType=1
+Top=21
+Left=0
+Bottom=453
+Right=913
+CursorLine=92
+CursorColumn=67
+TabIndex=2
+TabGroup=0

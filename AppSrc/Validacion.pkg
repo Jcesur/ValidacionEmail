@@ -1,0 +1,273 @@
+﻿Define cCaracteresPermitidos for "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789-._"
+Define cLetrasDigitos for "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789"
+Define cLetras for "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
+
+// -------------------------------
+Function ValidacionEmail String sEmail Returns Boolean
+    Boolean bRet
+    String sParteLocal sParteDominio sExtension
+    Integer iLen iPosicionArroba iPosicionUltimoPunto iLongitud
+ 
+    //Mayúsculas
+    Move (Uppercase(sEmail)) to sEmail
+    
+    //Elimina los espacios en blanco
+    Move (Trim(sEmail)) to sEmail
+    
+    //Divide en parte local y dominio  
+    Move (Length(sEmail)) to iLen
+    Move (Pos("@", sEmail)) to iPosicionArroba
+    Move (Mid(sEmail,(iPosicionArroba-1),1)) to sParteLocal
+    Move (Mid(sEmail,(iLen -iPosicionArroba), (iPosicionArroba+1))) to sParteDominio
+    
+    //Obtiene la extension
+    Move (Length(sParteDominio)) to iLongitud
+    Move (RightPos(".",sParteDominio)) to iPosicionUltimoPunto
+    Move (Mid(sParteDominio,(iLongitud - iPosicionUltimoPunto),(iPosicionUltimoPunto +1))) to sExtension
+    
+    
+    // ---------------
+    //Comprueba que no está vacío el campo
+    If (sEmail= "") Begin
+        Send Info_Box "Introduce tu email" "ERROR"
+        Function_Return False
+    End
+    
+     // --------------
+    //Comprueba la longitud total
+    If ((Length(sEmail)) >= 256) Begin
+        Send Info_Box "Longitud total no permitida" "ERROR"
+        Function_Return False
+    End
+    
+     // --------------
+    //Comprueba que no haya dos puntos seguidos
+    If (Pos("..", sEmail) > 0) Begin
+        Send Info_Box "Dos puntos seguidos no está permitido" "ERROR"
+        Function_Return False
+    End
+    
+    // --------------
+    //Comprueba que contenga 1 solo arroba   
+    Get UnArroba sEmail to bRet
+    If (not(bRet)) Begin
+        Send Info_Box "El email debe contener una @" "ERROR"
+        Function_Return False
+    End
+    
+      // --------------
+    //Comprueba caracteres permitidos local
+    Get CaracteresPermitidosLocal sParteLocal to bRet
+    If (not(bRet)) Begin
+        Send Info_Box "Caracter no permitido en la parte local (solo se admiten letras, números y '_', '-' o '.')" "ERROR"
+        Function_Return False
+    End
+    
+      // --------------
+    //Comprueba caracteres permitidos dominio
+    Get CaracteresPermitidosDominio sParteDominio to bRet
+    If (not(bRet)) Begin
+        Send Info_Box "Caracter no permitido en el dominio (solo se admiten letras, números y '_', '-' o '.')" "ERROR"
+        Function_Return False
+    End
+    // --------------
+    //Comprueba longitud de la parte local
+    Get LongitudParteLocal sParteLocal to bRet
+    If (not(bRet)) Begin
+        Send Info_Box "La longitud de la parte local, antes del símbolo '@', debe estar comprendida entre 1 y 64 caracteres." "ERROR"
+        Function_Return False
+    End
+    
+    // --------------
+    //Comprueba longitud de la parte dominio 
+    Get LongitudParteDominio sParteDominio to bRet
+    If (not(bRet)) Begin
+        Send Info_Box "La longitud del dominio, después del símbolo '@', debe estar comprendida entre 4 y 255 caracteres" "ERROR"
+        Function_Return False
+    End
+
+ // --------------
+    //Comprueba primer caracter parte local 
+    Get PrimerCaracterLocal sParteLocal to bRet
+    If (not(bRet)) Begin
+        Send Info_Box  "El primer caracter del nombre del email, antes del símbolo '@', debe ser una letra o un dígito" "ERROR"
+        Function_Return False
+    End
+    
+ // --------------
+    //Comprueba primer caracter parte dominio 
+    Get PrimerCaracterDominio sParteDominio to bRet
+    If (not(bRet)) Begin
+        Send Info_Box "El primer caracter del dominio, después del símbolo '@', debe ser una letra o un dígito" "ERROR"
+        Function_Return False
+    End
+
+// --------------
+    //Comprueba que la extension está formada por letras
+    Get CaracteresExtensionDominio sExtension to bRet
+    If (not(bRet)) Begin
+        Send Info_Box "La extensión sólo puede contener letras" "ERROR"
+        Function_Return False
+    End
+ 
+// --------------
+    //Comprueba que la longitud de la extension es correcta
+    Get LongitudExtensionDominio sExtension to bRet
+    If (not(bRet)) Begin
+        Send Info_Box "La longitud de la extensión debe contener entre 2 y 4 letras" "ERROR"
+        Function_Return False
+    End
+    
+
+   Function_Return True
+End_Function
+
+
+//Función que comprueba que está compuesto por letras, digitos y -._
+Function CaracteresPermitidosLocal String sEmail Returns Boolean
+   Integer iCount 
+   String sCaracteres 
+    
+    //Itera sobre el email
+    For iCount from 1 to (Length(sEmail))
+        
+        //Extrae los caracteres
+        Move (Mid(sEmail, 1, iCount)) to sCaracteres
+
+        //Comprueba que es válido
+        If (Pos(sCaracteres, cCaracteresPermitidos) = 0) Begin
+            Function_Return False
+        End
+
+    Loop 
+    
+        Function_Return True
+End_Function
+
+// -----------------------------------
+//Función que comprueba que la parte del dominio está compuesto por letras, digitos y -._
+Function CaracteresPermitidosDominio String sParteDominio Returns Boolean
+   Integer iCount 
+   String sCaracteres
+    
+    //Itera sobre el email
+    For iCount from 1 to (Length(sParteDominio))
+        
+        //Extrae los caracteres
+        Move (Mid(sParteDominio, 1, iCount)) to sCaracteres
+
+        //Comprueba que es válido
+        If (Pos(sCaracteres, cCaracteresPermitidos) = 0) Begin
+            Function_Return False
+        End
+
+    Loop 
+    
+        Function_Return True
+End_Function
+
+// -----------------------------------
+//Función que comprueba que contiene 1 solo arroba
+Function UnArroba String sEmail Returns Boolean
+    Integer iCount iCountArroba
+    
+    //Itera a través del email, si hay arroba, suma el contador
+    For iCount from 1 to (Length(sEmail))
+        If (Mid(sEmail, 1, iCount) = "@") Begin
+            Add 1 to iCountArroba
+        End
+    Loop
+    
+    If (iCountArroba = 1) Begin
+        Function_Return True
+    End
+    Else Begin
+        Function_Return False
+    End
+End_Function
+
+// -----------------------------------
+// Función que comprueba la longitud de la parte local 
+Function LongitudParteLocal String sParteLocal Returns Boolean
+   
+    If ((Length(sParteLocal)) >= 1 and (Length(sParteLocal)) <= 64) Begin
+        Function_Return True
+    End
+    Function_Return False
+End_Function
+
+// -----------------------------------
+// Función que comprueba la longitud del dominio
+Function LongitudParteDominio String sParteDominio Returns Boolean
+
+     If ((Length(sParteDominio)) >= 4 and (Length(sParteDominio)) <= 255) Begin
+        Function_Return True
+     End
+     Function_Return False
+End_Function
+
+// -----------------------------------
+// Función que Verifica que el primer caracter sea válido en parte local
+Function PrimerCaracterLocal String sParteLocal Returns Boolean
+    String sPrimerCaracter sPrimerCaracterCadena
+    Integer iCount 
+    
+     Move (Left(sParteLocal, 1)) to sPrimerCaracter
+     For iCount from 1 to (Length(cLetrasDigitos))
+        Move (Mid(cLetrasDigitos,1,iCount)) to sPrimerCaracterCadena
+        If (sPrimerCaracter=sPrimerCaracterCadena) Begin
+            Function_Return True
+        End
+     Loop
+     Function_Return False
+End_Function
+
+// -----------------------------------
+// Función que Verifica que el primer caracter sea válido en parte dominio
+Function PrimerCaracterDominio String sParteDominio Returns Boolean
+    String sPrimerCaracter sPrimerCaracterCadena
+    Integer iCount 
+    
+     Move (Left(sParteDominio, 1)) to sPrimerCaracter
+     For iCount from 1 to (Length(cLetrasDigitos))
+        Move (Mid(cLetrasDigitos,1,iCount)) to sPrimerCaracterCadena
+        If (sPrimerCaracter=sPrimerCaracterCadena) Begin
+            Function_Return True
+        End
+     Loop
+     Function_Return False
+End_Function
+
+// -----------------------------------
+// Función que Verifica que la extensión está formada por letras
+Function CaracteresExtensionDominio String sExtension Returns Boolean
+   
+   Integer iCount 
+   String sCaracteres
+    
+    //Itera sobre la extensión
+    For iCount from 1 to (Length(sExtension))
+        
+        //Extrae los caracteres
+        Move (Mid(sExtension, 1, iCount)) to sCaracteres
+
+        //Comprueba que es válido
+        If (Pos(sCaracteres, cLetras) = 0) Begin
+            Function_Return False
+        End
+    Loop 
+    Function_Return True
+End_Function
+
+// -----------------------------------
+// Función que Verifica la longitud de la extensión
+Function LongitudExtensionDominio String sExtension Returns Boolean
+   
+    If ((Length(sExtension)) >= 2 and (Length(sExtension)) <= 4) Begin
+        Function_Return True
+    End
+End_Function
+       
+
+       
+
